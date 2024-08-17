@@ -1,0 +1,50 @@
+{
+  "name": "mongovalid",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "sks147",
+  "main": "dist/index.js",
+  "module": "dist/mongovalid.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "analyze": "size-limit --why",
+    "build": "dts build",
+    "lint": "dts lint",
+    "prepare": "dts build",
+    "size": "size-limit",
+    "start": "dts watch",
+    "test": "dts test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "dts lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=12"
+  },
+  "size-limit": [
+    {
+      "path": "dist/mongovalid.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/mongovalid.esm.js",
+      "limit": "10 KB"
+    }
+  ]
+}
