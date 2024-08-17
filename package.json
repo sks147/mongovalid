@@ -14,6 +14,7 @@
     "analyze": "size-limit --why",
     "build": "dts build",
     "lint": "dts lint",
+    "lint-fix": "dts lint --fix",
     "prepare": "dts build",
     "size": "size-limit",
     "start": "dts watch",
@@ -54,5 +55,8 @@
     "size-limit": "^11.1.4",
     "tslib": "^2.6.3",
     "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "mongodb": "6.8.0"
   }
 }
