@@ -33,7 +33,6 @@
   "jest": {
     "testEnvironment": "node"
   },
-  "peerDependencies": {},
   "engines": {
     "node": ">=12"
   },
@@ -46,5 +45,14 @@
       "path": "dist/mongovalid.esm.js",
       "limit": "10 KB"
     }
-  ]
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^11.1.4",
+    "@tsconfig/recommended": "^1.0.7",
+    "dts-cli": "^2.0.5",
+    "husky": "^9.1.4",
+    "size-limit": "^11.1.4",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.4"
+  }
 }
