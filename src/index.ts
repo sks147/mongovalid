@@ -47,8 +47,9 @@ export const getValidation = async (
   const collectionInfos = db.listCollections({ name: collectionName });
   const collectionInfo = await collectionInfos.next();
   // TODO: notify mongodb team to fix typescript types for listCollections output
-  const { validator, validationLevel, validationAction } =
-    (collectionInfo as any)?.options || {};
+  const { validator, validationLevel, validationAction } = (
+    collectionInfo as any
+  ).options;
 
   return { validator, validationLevel, validationAction };
 };

@@ -99,6 +99,7 @@ describe('applyValidation', () => {
   it('should apply validation with strict level by default', async () => {
     const collectionName: string = STRICT_TEST_COLL;
     const schema: TValidationSchema = {
+      _id: { T: BSONType.objectId, R: true },
       name: { T: BSONType.string, R: true },
       age: { T: BSONType.number, R: false },
     };
@@ -111,8 +112,12 @@ describe('applyValidation', () => {
     expect(validator).toMatchObject({
       $jsonSchema: {
         bsonType: BSONType.object,
-        required: ['name'],
+        required: ['_id', 'name'],
         properties: {
+          _id: {
+            bsonType: BSONType.objectId,
+            description: '_id must be of type objectId and is required',
+          },
           name: {
             bsonType: BSONType.string,
             description: 'name must be of type string and is required',
@@ -128,11 +133,43 @@ describe('applyValidation', () => {
 
     expect(validationLevel).toBe(ValidationLevel.strict);
     expect(validationAction).toBe(ValidationAction.error);
+
+    const collection = db.collection(collectionName);
+
+    const validDoc = { name: 'John Doe', age: 30 };
+    try {
+      const validResult = await collection.insertOne(validDoc);
+      expect(validResult.acknowledged).toBe(true);
+    } catch (error) {
+      console.error('Failed to insert valid document:', error);
+      throw error; // Re-throw the error if it's unexpected
+    }
+
+    const invalidDoc = { age: 25 };
+    try {
+      await collection.insertOne(invalidDoc);
+    } catch (error) {
+      expect(error).toBeInstanceOf(MongoServerError);
+      expect((error as MongoServerError).errorResponse.errmsg).toMatch(
+        /Document failed validation/
+      );
+    }
+
+    const invalidDocType = { name: 'Jane Doe', age: 'twenty-five' };
+    try {
+      await collection.insertOne(invalidDocType);
+    } catch (error) {
+      expect(error).toBeInstanceOf(MongoServerError);
+      expect((error as MongoServerError).errorResponse.errmsg).toMatch(
+        /Document failed validation/
+      );
+    }
   });
 
   it('should apply validation with moderate level', async () => {
     const collectionName: string = MODERATE_TEST_COLL;
     const schema: TValidationSchema = {
+      _id: { T: BSONType.objectId, R: true },
       title: { T: BSONType.string, R: true },
       views: { T: BSONType.number, R: false },
     };
@@ -151,8 +188,12 @@ describe('applyValidation', () => {
     expect(validator).toMatchObject({
       $jsonSchema: {
         bsonType: BSONType.object,
-        required: ['title'],
+        required: ['_id', 'title'],
         properties: {
+          _id: {
+            bsonType: BSONType.objectId,
+            description: '_id must be of type objectId and is required',
+          },
           title: {
             bsonType: BSONType.string,
             description: 'title must be of type string and is required',
