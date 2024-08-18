@@ -1,17 +1,16 @@
 # MongoValid
 
+**MongoValid** is an npm package designed to provide robust, database-level validation for MongoDB, bringing more type safety to backend API development. This tool helps developers streamline their MongoDB workflows by simplifying the process of applying schema validation directly at the database level, ensuring that only valid data is persisted.
+
 [![NPM Version][npm-version-image]][npm-url]
 [![Linux Build][github-actions-ci-image]][github-actions-ci-url]
 [![NPM downloads][npm-downloads-url]][npm-url]
-
 
 [npm-url]: https://npmjs.org/package/mongovalid
 [npm-version-image]: https://img.shields.io/npm/v/mongovalid.svg?style=flat
 [github-actions-ci-image]: https://badgen.net/github/checks/sks147/mongovalid/main?label=linux
 [github-actions-ci-url]: https://github.com/sks147/mongovalid/actions/workflows/main.yml
 [npm-downloads-url]: https://img.shields.io/npm/dm/mongovalid.svg?style=flat
-
-**MongoValid** is an npm package designed to provide robust, database-level validation for MongoDB, bringing more type safety to backend API development. This tool helps developers streamline their MongoDB workflows by simplifying the process of applying schema validation directly at the database level, ensuring that only valid data is persisted.
 
 ## Key Features
 
