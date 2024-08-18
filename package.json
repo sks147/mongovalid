@@ -18,7 +18,7 @@
     "prepare": "dts build",
     "size": "size-limit",
     "start": "dts watch",
-    "test": "dts test --maxWorkers=10",
+    "test": "dts test",
     "test:coverage": "dts test --coverage"
   },
   "husky": {
