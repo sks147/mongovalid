@@ -4,12 +4,15 @@ import { TValidationLevel } from './types/ValidationLevel';
 import { TPropertiesWithDescription } from './types/Property';
 import * as Schema from './types/Schema';
 import * as MongoDB from 'mongodb';
+import { TValidationAction } from './types/ValidationAction';
+import { ValidationAction } from './constants/ValidationAction';
 
 export const applyValidation = async (
   collectionName: string,
   schema: Schema.TValidationSchema,
   db: MongoDB.Db,
-  validationLevel: TValidationLevel = ValidationLevel.strict
+  validationLevel: TValidationLevel = ValidationLevel.strict,
+  validationAction: TValidationAction = ValidationAction.error
 ): Promise<void> => {
   const requiredFields: string[] = Object.entries(schema)
     .filter(([_key, value]) => value.R !== false)
@@ -29,7 +32,25 @@ export const applyValidation = async (
       },
     },
     validationLevel: validationLevel,
+    validationAction: validationAction,
   });
+};
+
+export const getValidation = async (
+  collectionName: string,
+  db: MongoDB.Db
+): Promise<{
+  validator: MongoDB.Document;
+  validationLevel: TValidationLevel;
+  validationAction: TValidationAction;
+}> => {
+  const collectionInfos = db.listCollections({ name: collectionName });
+  const collectionInfo = await collectionInfos.next();
+  // TODO: notify mongodb team to fix typescript types for listCollections output
+  const { validator, validationLevel, validationAction } =
+    (collectionInfo as any)?.options || {};
+
+  return { validator, validationLevel, validationAction };
 };
 
 const generateProperties = (

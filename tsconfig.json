@@ -1,9 +1,10 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
-  "include": ["src", "types"],
+  "include": ["src", "test"],
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": false,
+    "types": ["jest", "node"],
   }
 }

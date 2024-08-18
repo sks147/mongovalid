@@ -1,0 +1,12 @@
+services:
+  mongo:
+    image: percona/percona-server-mongodb:7.0.12-7-multi
+    container_name: mongo_inmemory
+    command: mongod --storageEngine inMemory --dbpath /data/db --inMemorySizeGB 1
+    ports:
+      - "27017:27017"
+    volumes:
+      - /dev/shm:/data/db:rw
+
+volumes:
+  mongo_data:
