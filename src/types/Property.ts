@@ -1,6 +1,6 @@
 import { BSONType } from './BSONType';
 
-type TPropertyDescription = {
+export type TPropertyDescription = {
   bsonType: BSONType;
   description: string;
 };

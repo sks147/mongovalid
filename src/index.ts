@@ -1,15 +1,18 @@
-import * as bsonTypeConstants from './constants/BSONType';
+import { BSONType } from './constants/BSONType';
 import { ValidationLevel } from './constants/ValidationLevel';
 import { TValidationLevel } from './types/ValidationLevel';
-import { TPropertiesWithDescription } from './types/Property';
-import * as Schema from './types/Schema';
+import {
+  TPropertiesWithDescription,
+  TPropertyDescription,
+} from './types/Property';
+import { TValidationSchema, TSchemaField } from './types/Schema';
 import * as MongoDB from 'mongodb';
 import { TValidationAction } from './types/ValidationAction';
 import { ValidationAction } from './constants/ValidationAction';
 
 export const applyValidation = async (
   collectionName: string,
-  schema: Schema.TValidationSchema,
+  schema: TValidationSchema,
   db: MongoDB.Db,
   validationLevel: TValidationLevel = ValidationLevel.strict,
   validationAction: TValidationAction = ValidationAction.error
@@ -24,7 +27,7 @@ export const applyValidation = async (
     collMod: collectionName,
     validator: {
       $jsonSchema: {
-        bsonType: bsonTypeConstants.BSONType.object,
+        bsonType: BSONType.object,
         title: `${collectionName} schema validation`,
         required: requiredFields,
         properties: generateProperties(schema),
@@ -55,7 +58,7 @@ export const getValidation = async (
 };
 
 const generateProperties = (
-  schema: Schema.TValidationSchema
+  schema: TValidationSchema
 ): TPropertiesWithDescription => {
   const propertiesWithDescription: TPropertiesWithDescription = Object.entries(
     schema
@@ -72,3 +75,14 @@ const generateProperties = (
   }, {} as TPropertiesWithDescription);
   return propertiesWithDescription;
 };
+
+export type {
+  TValidationAction,
+  TValidationLevel,
+  TPropertiesWithDescription,
+  TPropertyDescription,
+  TSchemaField,
+  TValidationSchema,
+};
+
+export { BSONType, ValidationAction, ValidationLevel };

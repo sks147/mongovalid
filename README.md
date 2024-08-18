@@ -1,103 +1,79 @@
-# DTS User Guide
+# MongoValid
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with DTS. Let’s get you oriented with what’s here and how to use it.
+[![NPM Version][npm-version-image]][npm-url]
+[![Linux Build][github-actions-ci-image]][github-actions-ci-url]
+[![NPM downloads][npm-downloads-url]][npm-url]
 
-> This DTS setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+[npm-url]: https://npmjs.org/package/mongovalid
+[npm-version-image]: https://img.shields.io/npm/v/mongovalid.svg?style=flat
+[github-actions-ci-image]: https://badgen.net/github/checks/sks147/mongovalid/main?label=linux
+[github-actions-ci-url]: https://github.com/sks147/mongovalid/actions/workflows/main.yml
+[npm-downloads-url]: https://img.shields.io/npm/dm/mongovalid.svg?style=flat
 
-## Commands
+**MongoValid** is an npm package designed to provide robust, database-level validation for MongoDB, bringing more type safety to backend API development. This tool helps developers streamline their MongoDB workflows by simplifying the process of applying schema validation directly at the database level, ensuring that only valid data is persisted.
 
-DTS scaffolds your new library inside `/src`.
+## Key Features
 
-To run DTS, use:
+- **Type Safety**: Integrate in your existing codebase to ensure that your MongoDB schemas are strongly typed, reducing runtime errors and improving code quality.
+- **Flexible Validation**: This package enhances type safety by applying validation directly at the database level, while keeping the flexibility to enforce custom rules at the application layer. It simplifies validation by focusing on primitive data types in the database, which has proven effective in practice. This approach ensures that the database remains flexible and true to MongoDB’s document-oriented nature. The package deliberately avoids nested object validation to maintain backward compatibility and support canary deployments, preventing potential issues related to schema evolution.
+- **Seamless Integration**: Works with MongoDB’s native validation mechanisms, making it easy to enforce data integrity without relying on external validation libraries.
+- **Error Handling**: Automatically catch and handle validation errors, providing clear feedback during development and testing. [TODO]
+
+## Documentation
+Please visit the documentation [here](https://sks147.github.io/mongovalid/docs/index.html)
+
+## Installation
+
+To install the package, use npm:
 
 ```bash
-npm start # or yarn start
+npm install mongovalid
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+## Usage
+```typescript
+import { MongoClient } from 'mongodb';
 
-To do a one-off build, use `npm run build` or `yarn build`.
+import {
+  applyValidation,
+  ValidationAction,
+  ValidationLevel,
+  TValidationSchema,
+  BSONType
+} from 'mongovalid'
 
-To run tests, use `npm test` or `yarn test`.
+async function main() {
+  const uri = 'mongodb://localhost:27017';
+  const connection = await MongoClient.connect(uri);
+  const db = connection.db('mydatabase');
 
-## Configuration
+  // T: BSONType, R: required?
+  const schema: TValidationSchema = {
+    _id: {
+      T: BSONType.objectId
+    } // default R: true
+    name: {
+      T: BSONType.string
+    },
+    age: {
+      T: BSONType.number,
+      R: false
+    },
+  };
 
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
+  await applyValidation('mycollection', schema, db);
 
-### Jest
+  // Change validation level moderate
+  await applyValidation('mycollection', schema, db, ValidationLevel.moderate);
 
-Jest tests are set up to run with `npm test` or `yarn test`.
+  // Change validation level to moderate and validation action to warn
+  await applyValidation('mycollection', schema, db, ValidationLevel.moderate, ValidationAction.warn);
 
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.ts        # EDIT THIS
-/test
-  index.test.ts   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
-
-### Rollup
-
-DTS uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `dts` [optimizations docs](https://github.com/weiran-zsd/dts-cli#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
+  console.log('Validation applied successfully');
 }
+
+
+main().catch(console.error);
+
 ```
-
-You can also choose to install and use [invariant](https://github.com/weiran-zsd/dts-cli#invariant) and [warning](https://github.com/weiran-zsd/dts-cli#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. DTS has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).

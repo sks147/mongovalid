@@ -1,9 +1,12 @@
 import { MongoClient, Db, MongoServerError } from 'mongodb';
-import { applyValidation, getValidation } from '../src/index';
-import { ValidationLevel } from '../src/constants/ValidationLevel';
+import {
+  applyValidation,
+  getValidation,
+  BSONType,
+  ValidationAction,
+  ValidationLevel,
+} from '../src/index';
 import { TValidationSchema } from '../src/types/Schema';
-import { BSONType } from '../src/constants/BSONType';
-import { ValidationAction } from '../src/constants/ValidationAction';
 
 let connection: MongoClient;
 let db: Db;

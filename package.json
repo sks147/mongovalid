@@ -19,7 +19,8 @@
     "size": "size-limit",
     "start": "dts watch",
     "test": "dts test",
-    "coverage": "dts test --coverage"
+    "coverage": "dts test --coverage",
+    "doc": "typedoc src/index.ts src/types/* src/constants/*"
   },
   "husky": {
     "hooks": {
@@ -55,6 +56,7 @@
     "husky": "^9.1.4",
     "size-limit": "^11.1.4",
     "tslib": "^2.6.3",
+    "typedoc": "0.26.5",
     "typescript": "^5.5.4"
   },
   "dependencies": {
