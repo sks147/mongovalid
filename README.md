@@ -21,7 +21,7 @@
 - **Error Handling**: Automatically catch and handle validation errors, providing clear feedback during development and testing. [TODO]
 
 ## Documentation
-Please visit the documentation [here](https://sks147.github.io/mongovalid/docs/index.html)
+Please visit the documentation [here](https://sks147.github.io/mongovalid/index.html)
 
 ## Installation
 
