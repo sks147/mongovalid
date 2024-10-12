@@ -23,6 +23,13 @@ export const applyValidation = async (
       return key.toString();
     });
 
+  const collections = await db
+    .listCollections({ name: collectionName })
+    .toArray();
+  if (collections.length === 0) {
+    await db.createCollection(collectionName);
+  }
+
   await db.command({
     collMod: collectionName,
     validator: {

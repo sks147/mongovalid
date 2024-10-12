@@ -230,4 +230,126 @@ describe('applyValidation', () => {
       expect(errmsg).toContain("'required' cannot be an empty array");
     }
   });
+
+  it('should create collection and apply validation when collection does not exist', async () => {
+    const collectionName = 'non_existent_collection';
+    const schema: TValidationSchema = {
+      _id: { T: BSONType.objectId, R: true },
+      name: { T: BSONType.string, R: true },
+      age: { T: BSONType.number, R: false },
+    };
+
+    await db
+      .collection(collectionName)
+      .drop()
+      .catch(() => {});
+
+    await applyValidation(collectionName, schema, db);
+
+    const collections = await db.listCollections().toArray();
+    const collectionExists = collections.some(
+      (col) => col.name === collectionName
+    );
+    expect(collectionExists).toBe(true);
+
+    // Verify the validation
+    const { validator, validationLevel, validationAction } =
+      await getValidation(collectionName, db);
+
+    expect(validator).toMatchObject({
+      $jsonSchema: {
+        bsonType: BSONType.object,
+        required: ['_id', 'name'],
+        properties: {
+          _id: {
+            bsonType: BSONType.objectId,
+            description: '_id must be of type objectId and is required',
+          },
+          name: {
+            bsonType: BSONType.string,
+            description: 'name must be of type string and is required',
+          },
+          age: {
+            bsonType: BSONType.number,
+            description: 'age must be of type number and is not required',
+          },
+        },
+        additionalProperties: false,
+      },
+    });
+
+    expect(validationLevel).toBe(ValidationLevel.strict);
+    expect(validationAction).toBe(ValidationAction.error);
+
+    await db.collection(collectionName).drop();
+  });
+
+  it('should create collection with custom validation level and action when collection does not exist', async () => {
+    const collectionName = 'custom_non_existent_collection';
+    const schema: TValidationSchema = {
+      _id: { T: BSONType.objectId, R: true },
+      title: { T: BSONType.string, R: true },
+      count: { T: BSONType.int, R: false },
+    };
+
+    await db
+      .collection(collectionName)
+      .drop()
+      .catch(() => {});
+
+    await applyValidation(
+      collectionName,
+      schema,
+      db,
+      ValidationLevel.moderate,
+      ValidationAction.warn
+    );
+
+    const collections = await db.listCollections().toArray();
+    const collectionExists = collections.some(
+      (col) => col.name === collectionName
+    );
+    expect(collectionExists).toBe(true);
+
+    const { validator, validationLevel, validationAction } =
+      await getValidation(collectionName, db);
+
+    expect(validator).toMatchObject({
+      $jsonSchema: {
+        bsonType: BSONType.object,
+        required: ['_id', 'title'],
+        properties: {
+          _id: {
+            bsonType: BSONType.objectId,
+            description: '_id must be of type objectId and is required',
+          },
+          title: {
+            bsonType: BSONType.string,
+            description: 'title must be of type string and is required',
+          },
+          count: {
+            bsonType: BSONType.int,
+            description: 'count must be of type int and is not required',
+          },
+        },
+        additionalProperties: false,
+      },
+    });
+
+    expect(validationLevel).toBe(ValidationLevel.moderate);
+    expect(validationAction).toBe(ValidationAction.warn);
+
+    const collection = db.collection(collectionName);
+
+    const validDoc = { title: 'Valid Title', count: 5 };
+    const validResult = await collection.insertOne(validDoc);
+    expect(validResult.acknowledged).toBe(true);
+
+    const invalidDoc = { count: 'invalid' };
+    const invalidResult = await collection.insertOne(invalidDoc);
+    expect(invalidResult.acknowledged).toBe(true); // Should insert due to warn action
+
+    // Clean up
+    await db.collection(collectionName).drop();
+  });
 });
