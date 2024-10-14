@@ -6,6 +6,23 @@
   "main": "dist/index.js",
   "module": "dist/mongovalid.esm.js",
   "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sks147/mongovalid.git"
+  },
+  "homepage": "https://github.com/sks147/mongovalid",
+  "keywords": [
+    "mongodb",
+    "validation",
+    "schema",
+    "typescript",
+    "database",
+    "nosql",
+    "orm",
+    "odm",
+    "data-validation",
+    "type-safety"
+  ],
   "files": [
     "dist",
     "src"
@@ -31,10 +48,24 @@
     "printWidth": 80,
     "semi": true,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "useTabs": true,
+		"tabWidth": 4
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "collectCoverage": true,
+		"collectCoverageFrom": [
+			"./src/**"
+		],
+		"coverageThreshold": {
+			"global": {
+				"branches": 100,
+				"functions": 100,
+				"lines": 100,
+				"statements": 100
+			}
+		}
   },
   "engines": {
     "node": ">=12"
